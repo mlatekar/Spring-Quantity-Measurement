@@ -1,6 +1,6 @@
 package com.bridgelabz.quantitymeasurement.enumTypes;
 
-public enum quantityTypes {
+public enum QuantityTypes {
     WEIGHT, VOLUME, LENGTH, TEMP
 }
 

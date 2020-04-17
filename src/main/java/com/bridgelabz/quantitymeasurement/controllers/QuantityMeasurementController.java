@@ -1,52 +1,48 @@
 package com.bridgelabz.quantitymeasurement.controllers;
 
-import com.bridgelabz.quantitymeasurement.dto.unitDTO;
-import com.bridgelabz.quantitymeasurement.enumTypes.quantityTypes;
-import com.bridgelabz.quantitymeasurement.enumTypes.unitType;
+import com.bridgelabz.quantitymeasurement.dto.ResponseDTO;
+import com.bridgelabz.quantitymeasurement.dto.UnitDTO;
+import com.bridgelabz.quantitymeasurement.enumTypes.QuantityTypes;
+import com.bridgelabz.quantitymeasurement.enumTypes.UnitType;
 import com.bridgelabz.quantitymeasurement.service.IQuantityMeasurementService;
-import com.bridgelabz.quantitymeasurement.service.implimentation.QuantityMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 public class QuantityMeasurementController {
+
     QuantityMeasurementController quantityMeasurement = null;
 
     @Autowired
     IQuantityMeasurementService quantityMeasurementService;
 
     @GetMapping("hello")
-    public String hello()
-    {
+    public String hello() {
         return "Hello, Welcome To Quantity Measurement";
-
     }
 
     @GetMapping("/unit/getAllQuantityTypes")
-    public List<quantityTypes> getAllQuantityTypes() {
-        return quantityMeasurementService.getAllQuantityUnits();
-
-    }
-
-    @GetMapping("/unit/getAllUnitTypes")
-    public List<unitType> getAllUnits() {
-        return quantityMeasurementService.getAllUnits();
-
+    public ResponseEntity<ResponseDTO> getAllQuantityTypes() {
+        List<QuantityTypes> quantityTypesList = quantityMeasurementService.getAllQuantityUnits();
+        ResponseDTO responseDTO = new ResponseDTO(quantityTypesList, "Successful", 200);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/units")
-    public List<unitType> getAllSubUnitTypes(@RequestParam(value = "types") quantityTypes types) {
-        return quantityMeasurementService.getAllUnitType(types);
+    public ResponseEntity<ResponseDTO> getAllSubUnitTypes(@RequestParam(value = "types") QuantityTypes types) {
+        List<UnitType> unitTypesList = quantityMeasurementService.getAllUnitType(types);
+        ResponseDTO responseDTO = new ResponseDTO(unitTypesList, "Successful", 200);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-   /* public void mockedTheObject(QuantityMeasurementService quantityMeasurementService) {
-        this.quantityMeasurementService = quantityMeasurementService;
-    }*/
+    @PostMapping("/unit/convertUnits")
+    public ResponseEntity<ResponseDTO> convertUintValue(@RequestBody UnitDTO unitDTO) throws Exception {
+        Double convertedValue = quantityMeasurementService.convertUnit(unitDTO);
+        ResponseDTO responseDTO = new ResponseDTO(convertedValue, "Successful", 200);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }
